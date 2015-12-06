@@ -10184,6 +10184,9 @@ var _createClass = (function () { function defineProperties(target, props) { for
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var MassRevFeedViewerModule = (function () {
+
+    // контейнер с данными записи
+
     var Feed = function Feed(feed) {
         _classCallCheck(this, Feed);
 
@@ -10191,6 +10194,8 @@ var MassRevFeedViewerModule = (function () {
         this.name = String(feed.user && feed.user.name ? feed.user.name : '');
         this.text = String(feed.text || '');
     };
+
+    // Сервис получения данных
 
     var FeedsApiService = (function () {
         function FeedsApiService(url, itemsToGet, respnseHandler) {
@@ -10200,6 +10205,8 @@ var MassRevFeedViewerModule = (function () {
             this.itemsToGet = itemsToGet;
             this.responseHandler = respnseHandler;
         }
+
+        // получить порцию новых данных
 
         _createClass(FeedsApiService, [{
             key: 'getData',
@@ -10238,6 +10245,8 @@ var MassRevFeedViewerModule = (function () {
         return FeedsApiService;
     })();
 
+    // Обработчик получения ответа от api
+
     var FeedsResponseHandler = (function () {
         function FeedsResponseHandler() {
             _classCallCheck(this, FeedsResponseHandler);
@@ -10258,6 +10267,7 @@ var MassRevFeedViewerModule = (function () {
 
         return FeedsResponseHandler;
     })();
+    // Сервис опроса api
 
     var FeedsDataService = (function () {
         function FeedsDataService(url, itemsToGet, pollingInterval) {
@@ -10268,12 +10278,17 @@ var MassRevFeedViewerModule = (function () {
             this.lastEntityId = 0;
         }
 
+        // начать процесс получения данных
+
         _createClass(FeedsDataService, [{
             key: 'startPolling',
             value: function startPolling(resultCallback) {
                 this.resultCallback = resultCallback;
-                setTimeout(this.getData.bind(this), this.interval);
+                this.getData();
             }
+
+            // шаг получения данных
+
         }, {
             key: 'getData',
             value: function getData() {
@@ -10297,6 +10312,8 @@ var MassRevFeedViewerModule = (function () {
         return FeedsDataService;
     })();
 
+    // компонент пользовательского интерфейса
+
     var FeedsUiComponent = (function () {
         function FeedsUiComponent(container, itemsToShow) {
             _classCallCheck(this, FeedsUiComponent);
@@ -10305,6 +10322,8 @@ var MassRevFeedViewerModule = (function () {
             this.itemsToShow = itemsToShow;
             this.feeds = [];
         }
+
+        // перерисовать компонент
 
         _createClass(FeedsUiComponent, [{
             key: 'redraw',
@@ -10325,11 +10344,17 @@ var MassRevFeedViewerModule = (function () {
                     this.container.prepend(newFeeds);
                 }
             }
+
+            // получить разметку для элемента данных
+
         }, {
             key: 'getFeedMarkup',
             value: function getFeedMarkup(name, text) {
                 return '<div class="feed-item-container">' + '<h1>' + (name || '') + '</h1>' + '<p>' + (text ? this.urlify(text) : '') + '</p>' + '</div>';
             }
+
+            // обернуть все ссылки в соотв. dom-элемент
+
         }, {
             key: 'urlify',
             value: function urlify(text) {
@@ -10342,6 +10367,8 @@ var MassRevFeedViewerModule = (function () {
 
         return FeedsUiComponent;
     })();
+
+    // основной класс приложения
 
     var MassRevFeedViewer = (function () {
         function MassRevFeedViewer() {
@@ -10358,14 +10385,17 @@ var MassRevFeedViewerModule = (function () {
             value: function getInstance() {
                 return MassRevFeedViewer._instance;
             }
+
+            // метод запуска приложения
+
         }, {
             key: 'run',
             value: function run(opts) {
                 var options = $.extend({
-                    containerId: null,
-                    url: null,
-                    pollingInterval: 5000,
-                    itemsToGet: 3
+                    containerId: null, // идентификатор dom-контейнера
+                    url: null, // url сервиса данных
+                    pollingInterval: 5000, // интервал опроса сервиса даных в миллисекундах
+                    itemsToGet: 3 // количество записей данных для получения
                 }, opts);
 
                 if (!options.containerId || !$("#" + options.containerId).length) {

@@ -9,7 +9,7 @@ class FeedsDataService {
     // начать процесс получения данных
     startPolling(resultCallback) {
         this.resultCallback = resultCallback;
-        setTimeout(this.getData.bind(this), this.interval);
+        this.getData();
     }
 
     // шаг получения данных
